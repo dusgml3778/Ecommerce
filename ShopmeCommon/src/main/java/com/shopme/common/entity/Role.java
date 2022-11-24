@@ -7,6 +7,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+<<<<<<< HEAD
 @Entity // 엔티티 클래스 임을 나타냄
 @Table(name = "roles") // 테이블 명
 public class Role {
@@ -37,6 +38,35 @@ public class Role {
 
 	public Role(String name, String description) {
 
+=======
+@Entity
+@Table(name = "roles")
+public class Role {
+
+	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	private Integer id;
+	
+	@Column(length = 40 ,nullable = false ,unique = true)
+	private String name;
+	
+	@Column(length = 150 ,nullable = false)
+	private String description;
+	
+	public Role() {
+		
+	}
+	
+	
+	public Role(String name) {
+		
+		this.name = name;
+	}
+	
+
+	public Role(String name, String description) {
+	
+>>>>>>> cbfe1da6f7b2075d7350409f43d941411af0038a
 		this.name = name;
 		this.description = description;
 	}
@@ -65,6 +95,7 @@ public class Role {
 		this.description = description;
 	}
 
+<<<<<<< HEAD
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -95,4 +126,6 @@ public class Role {
 		return "Role [name=" + name + "]";
 	}
 
+=======
+>>>>>>> cbfe1da6f7b2075d7350409f43d941411af0038a
 }
