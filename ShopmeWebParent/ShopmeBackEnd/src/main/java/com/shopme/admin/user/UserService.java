@@ -3,6 +3,8 @@ package com.shopme.admin.user;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -11,6 +13,7 @@ import com.shopme.common.entity.Role;
 import com.shopme.common.entity.User;
 
 @Service
+@Transactional
 public class UserService {
 
 	@Autowired
@@ -29,6 +32,10 @@ public class UserService {
 		return (List<Role>) roleRepo.findAll();
 	}
 
+	/**
+	 * User Info Save
+	 * @param user
+	 */
 	public void save(User user) {
 		boolean isUpdatingUser = (user.getId() != null);
 
@@ -49,12 +56,22 @@ public class UserService {
 		userRepo.save(user);
 	}
 
+	/**
+	 * Password Encoding
+	 * @param user
+	 */
 	private void encodePassword(User user) {
 		String encodePassword = passwordEncoder.encode(user.getPassword());
 		user.setPassword(encodePassword);
 
 	}
 
+	/**
+	 * Email Unique Check
+	 * @param id
+	 * @param email
+	 * @return
+	 */
 	public boolean isEmailUnique(Integer id, String email) {
 
 		User userByEmail = userRepo.getUserByEmail(email);
@@ -77,6 +94,12 @@ public class UserService {
 		return true;
 	}
 
+	/**
+	 * Find id
+	 * @param id
+	 * @return
+	 * @throws UserNotFoundException
+	 */
 	public User get(Integer id) throws UserNotFoundException {
 		try {
 			return userRepo.findById(id).get();
@@ -84,5 +107,21 @@ public class UserService {
 			throw new UserNotFoundException("Could not find any user with ID" + id);
 		}
 
+	}
+	
+	public void delete(Integer id) throws UserNotFoundException {
+		Long countById = userRepo.countById(id);
+		
+		if(countById==null || countById == 0) {
+			throw new UserNotFoundException("Could not find any user with ID" + id);
+
+		}
+		
+		userRepo.deleteById(id);
+		
+	}
+	
+	public void updateUserEnabledStatus(Integer id, boolean enabled) {
+		userRepo.updateEnabledStatus(id, enabled);
 	}
 }

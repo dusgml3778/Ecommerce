@@ -21,12 +21,12 @@ public class UserContoroller {
 
 	@GetMapping("/users")
 	public String listAll(Model model) {
-		List<User> listUsers =service.listAll();
+		List<User> listUsers = service.listAll();
 		model.addAttribute("listUsers", listUsers);
-		
+
 		return "users";
 	}
-	
+
 	@GetMapping("/users/new")
 	public String newUser(Model model) {
 		List<Role> listRoles = service.listRoles();
@@ -38,27 +38,27 @@ public class UserContoroller {
 
 		return "user_form";
 	}
-	
+
 	@PostMapping("/users/save")
 	public String saveUser(User user, RedirectAttributes redirectAttributes) {
-	
+
 		System.out.println(user.toString());
 		service.save(user);
-		
+
 		redirectAttributes.addFlashAttribute("message", "The user has been saved successfully.");
 		return "redirect:/users";
 	}
-	
+
 	@GetMapping("/users/edit/{id}")
 	public String editUser(@PathVariable(name = "id") Integer id, RedirectAttributes redirectAttributes, Model model) {
 		try {
 			User user = service.get(id);
 			List<Role> listRoles = service.listRoles();
-			
+
 			model.addAttribute("user", user);
 			model.addAttribute("pageTitle", "EditUser (ID: " + id + ")");
 			model.addAttribute("listRoles", listRoles);
-			
+
 			return "user_form";
 		} catch (UserNotFoundException e) {
 			redirectAttributes.addFlashAttribute("message", e.getMessage());
@@ -66,5 +66,30 @@ public class UserContoroller {
 		}
 
 	}
+
+	@GetMapping("/users/delete/{id}")
+	public String deleteUser(@PathVariable(name = "id") Integer id, RedirectAttributes redirectAttributes,
+			Model model) {
+		try {
+			service.delete(id);
+			redirectAttributes.addFlashAttribute("message", "The user ID" + id + " has been deleted successfully");
+
+		} catch (UserNotFoundException e) {
+			redirectAttributes.addFlashAttribute("message", e.getMessage());
+
+		}
+		return "redirect:/users";
+	}
 	
+	@GetMapping("/users/{id}/enabled/{status}")
+	public String updateUserEnabledStatus(@PathVariable("id") Integer id, @PathVariable("status") boolean enabled, RedirectAttributes redirectAttributes ) {
+		
+		service.updateUserEnabledStatus(id, enabled);
+		String status = enabled ? "enabled" : "disabled";
+		String message = "The user ID" + id + " has been " + status;
+		redirectAttributes.addFlashAttribute("message", message);
+		return "redirect:/users";
+	}
+	
+
 }
