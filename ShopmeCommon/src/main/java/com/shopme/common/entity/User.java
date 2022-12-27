@@ -12,6 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name = "users")
@@ -29,19 +30,19 @@ public class User {
 
 	@Column(name = "first_name", length = 45, nullable = false)
 	private String firstName;
-	
+
 	@Column(name = "last_name", length = 45, nullable = false)
 	private String lastName;
-	
+
 	@Column(length = 64)
 	private String photos;
-	
+
 	private boolean enabled;
-		
+
 	public User() {
 
 	}
-	
+
 	public User(String email, String password, String firstName, String lastName) {
 		super();
 		this.email = email;
@@ -51,9 +52,7 @@ public class User {
 	}
 
 	@ManyToMany
-	@JoinTable(name = "users_roles", joinColumns = @JoinColumn(name = "user_id")
-	,inverseJoinColumns = @JoinColumn(name = "role_id")
-			)
+	@JoinTable(name = "users_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
 	private Set<Role> roles = new HashSet<>();
 
 	public Integer getId() {
@@ -119,7 +118,7 @@ public class User {
 	public void setRoles(Set<Role> roles) {
 		this.roles = roles;
 	}
-	
+
 	public void addRole(Role role) {
 		this.roles.add(role);
 	}
@@ -129,5 +128,13 @@ public class User {
 		return "User [id=" + id + ", email=" + email + ", firstName=" + firstName + ", lastName=" + lastName
 				+ ", roles=" + roles + "]";
 	}
-	
+
+	@Transient
+	public String getPhotosImagePath() {
+		if(id == null || photos == null) 
+			return "/images/default-user.png";
+		
+		return "/user-photos/" + this.id + "/" + this.photos;
+	}
+
 }
