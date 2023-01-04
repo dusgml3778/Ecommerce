@@ -35,11 +35,18 @@ public class UserContoroller {
 		Page<User> page = service.listByPage(pageNum);
 		// 한 페이지에 담긴 유저 객체 정보 
 		List<User> listUsers = page.getContent();
-		
-		System.out.println("PageNum = " + pageNum);
-		System.out.println("Total elements = " + page.getTotalElements());
-		System.out.println("Total pages = " + page.getTotalPages());
-		
+
+		long startCount = (pageNum - 1) * UserService.USERS_PER_PAGE + 1;
+		long endCount = startCount + UserService.USERS_PER_PAGE - 1;
+		if (endCount > page.getTotalElements()) {
+			endCount = page.getTotalElements();
+		}
+
+		model.addAttribute("currentPage", pageNum);
+		model.addAttribute("totalPage", page.getTotalPages());
+		model.addAttribute("startCount", startCount);
+		model.addAttribute("endCount", endCount);
+		model.addAttribute("totalItems", page.getTotalElements());
 		model.addAttribute("listUsers", listUsers);
 
 		return "users";

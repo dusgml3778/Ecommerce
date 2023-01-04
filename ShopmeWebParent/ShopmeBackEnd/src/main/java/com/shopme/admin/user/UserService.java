@@ -6,7 +6,6 @@ import java.util.NoSuchElementException;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties.Pageable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,7 +18,7 @@ import com.shopme.common.entity.User;
 @Transactional
 public class UserService {
 
-	public static final int USERS_PER_PAGE = 4;
+	public static final int USERS_PER_PAGE = 5;
 	
 	@Autowired
 	private UserRepository userRepo;

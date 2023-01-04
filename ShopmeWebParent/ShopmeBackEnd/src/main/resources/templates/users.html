@@ -112,7 +112,35 @@
 			</table>
 
 		</div>
+		
+		<!-- 페이지네이션 -->
+		<div class = "text-center m-1" th:if = "${totalItems > 0}">
+			<span>Showing users # [[${startCount}]] to [[${endCount}]] of [[${totalItems}]]</span>
+		</div>
+		<div class = "text-center m-1" th:if = "${totalItems < 0}">
+			<span>No users found</span>
+		</div>
 
+		<div>
+			<nav aria-label="Page navigation example">
+				<ul class="pagination justify-content-center">
+					<li th:class="${currentPage > 1 ? 'page-item' : 'page-item disabled'}"><a class="page-link" th:href="@{/users/page/1}">First</a></li>
+					<!-- 현재 페이지가 1페이지면 previous 버튼을 비 활성화  -->
+					<li th:class="${currentPage > 1 ? 'page-item' : 'page-item disabled'}">
+					 <a class="page-link" th:href="@{'/users/page/' + ${currentPage -1}}">Previous</a>
+					</li>
+					<!-- 동적 클래스를 이용해 해당 페이지는 파란색으로 표시  -->
+					<li th:class="${currentPage !=i ? 'page-item':'page-item active'}" th:each="i : ${#numbers.sequence(1, totalPage)}">
+					 <a class="page-link" th:href="@{'/users/page/' + ${i}}">[[${i}]]</a>
+					</li>
+
+					<li th:class="${currentPage < totalPage ? 'page-item' : 'page-item disabled'}"><a class="page-link" th:href="@{'/users/page/' + ${currentPage +1}}">Next</a></li>
+					<li th:class="${currentPage < totalPage ? 'page-item' : 'page-item disabled'}"><a class="page-link" th:href="@{'/users/page/'+ ${totalPage}}">Last</a></li>
+				</ul>
+			</nav>
+		</div>
+
+		<!-- 모달 창  -->
 		<div class="modal fade text-center" id="confirmModal">
 			<div class="modal-dialog">
 				<div class="modal-content">
