@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -21,18 +22,23 @@ import com.shopme.common.entity.User;
 
 @Controller
 public class UserContoroller {
-
+	
+	private static final String DEFAULT_FIELD = "firstName";
+	private static final String DEFAULT_DISPLAY = "asc";
+	
 	@Autowired
 	private UserService service;
 
 	@GetMapping("/users")
 	public String listFirstPage(Model model) {
-		return listByPage(1, model);
+		// 로딩했을때 디폴트 정렬은 이름/오름차순
+		return listByPage(1, model, DEFAULT_FIELD, DEFAULT_DISPLAY);
 	}
 	
 	@GetMapping("/users/page/{pageNum}")
-	public String listByPage(@PathVariable(name = "pageNum") int pageNum, Model model) {
-		Page<User> page = service.listByPage(pageNum);
+	public String listByPage(@PathVariable(name = "pageNum") int pageNum, Model model,
+			@Param("sortField") String sortField, @Param("sortDir") String sortDir) {
+		Page<User> page = service.listByPage(pageNum, sortField, sortDir);
 		// 한 페이지에 담긴 유저 객체 정보 
 		List<User> listUsers = page.getContent();
 
@@ -42,13 +48,18 @@ public class UserContoroller {
 			endCount = page.getTotalElements();
 		}
 
+		String reverseSortDir = sortDir.equals("asc") ? "desc" : "asc";
+		
 		model.addAttribute("currentPage", pageNum);
 		model.addAttribute("totalPage", page.getTotalPages());
 		model.addAttribute("startCount", startCount);
 		model.addAttribute("endCount", endCount);
 		model.addAttribute("totalItems", page.getTotalElements());
 		model.addAttribute("listUsers", listUsers);
-
+		model.addAttribute("sortField", sortField);
+		model.addAttribute("sortDir", sortDir);
+		model.addAttribute("reverseSortDir", reverseSortDir);
+		
 		return "users";
 	}
 	@GetMapping("/users/new")
