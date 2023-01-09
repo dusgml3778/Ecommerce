@@ -32,13 +32,15 @@ public class UserContoroller {
 	@GetMapping("/users")
 	public String listFirstPage(Model model) {
 		// 로딩했을때 디폴트 정렬은 이름/오름차순
-		return listByPage(1, model, DEFAULT_FIELD, DEFAULT_DISPLAY);
+		return listByPage(1, model, DEFAULT_FIELD, DEFAULT_DISPLAY, null);
 	}
 	
 	@GetMapping("/users/page/{pageNum}")
 	public String listByPage(@PathVariable(name = "pageNum") int pageNum, Model model,
-			@Param("sortField") String sortField, @Param("sortDir") String sortDir) {
-		Page<User> page = service.listByPage(pageNum, sortField, sortDir);
+			@Param("sortField") String sortField,
+			@Param("sortDir") String sortDir,
+			@Param("keyword") String keyword) {
+		Page<User> page = service.listByPage(pageNum, sortField, sortDir, keyword);
 		// 한 페이지에 담긴 유저 객체 정보 
 		List<User> listUsers = page.getContent();
 
@@ -59,6 +61,7 @@ public class UserContoroller {
 		model.addAttribute("sortField", sortField);
 		model.addAttribute("sortDir", sortDir);
 		model.addAttribute("reverseSortDir", reverseSortDir);
+		model.addAttribute("keyword", keyword);
 		
 		return "users";
 	}

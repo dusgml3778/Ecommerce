@@ -20,7 +20,7 @@ import com.shopme.common.entity.User;
 public class UserService {
 
 	public static final int USERS_PER_PAGE = 5;
-	
+
 	@Autowired
 	private UserRepository userRepo;
 	@Autowired
@@ -32,13 +32,17 @@ public class UserService {
 
 		return (List<User>) userRepo.findAll();
 	}
-	
-	public Page<User> listByPage(int pageNum, String sortField, String sortDir){
+
+	public Page<User> listByPage(int pageNum, String sortField, String sortDir, String keyword) {
 		Sort sort = Sort.by(sortField);
 		sort = sortDir.equals("asc") ? sort.ascending() : sort.descending();
-		
-		PageRequest pageable = PageRequest.of(pageNum-1, USERS_PER_PAGE, sort);
-		
+
+		PageRequest pageable = PageRequest.of(pageNum - 1, USERS_PER_PAGE, sort);
+
+		if (keyword != null) {
+			return userRepo.findAll(keyword, pageable);
+		}
+
 		return userRepo.findAll(pageable);
 	}
 
@@ -48,8 +52,9 @@ public class UserService {
 
 	/**
 	 * User Info Save
+	 * 
 	 * @param user
-	 * @return 
+	 * @return
 	 */
 	public User save(User user) {
 		boolean isUpdatingUser = (user.getId() != null);
@@ -73,6 +78,7 @@ public class UserService {
 
 	/**
 	 * Password Encoding
+	 * 
 	 * @param user
 	 */
 	private void encodePassword(User user) {
@@ -83,6 +89,7 @@ public class UserService {
 
 	/**
 	 * Email Unique Check
+	 * 
 	 * @param id
 	 * @param email
 	 * @return
@@ -111,6 +118,7 @@ public class UserService {
 
 	/**
 	 * Find id
+	 * 
 	 * @param id
 	 * @return
 	 * @throws UserNotFoundException
@@ -123,19 +131,19 @@ public class UserService {
 		}
 
 	}
-	
+
 	public void delete(Integer id) throws UserNotFoundException {
 		Long countById = userRepo.countById(id);
-		
-		if(countById==null || countById == 0) {
+
+		if (countById == null || countById == 0) {
 			throw new UserNotFoundException("Could not find any user with ID" + id);
 
 		}
-		
+
 		userRepo.deleteById(id);
-		
+
 	}
-	
+
 	public void updateUserEnabledStatus(Integer id, boolean enabled) {
 		userRepo.updateEnabledStatus(id, enabled);
 	}

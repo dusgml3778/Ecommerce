@@ -141,4 +141,25 @@ public class UserRepositoryTests {
 		
 		assertThat(listUsers.size()).isEqualTo(pageSize);
 	}
+	
+	@Test
+	public void testSearchUsers() {
+		
+		String keyword = "bruce";
+		// 페이지 번호
+		int pageNumber = 0;
+		// 한 페이지 당 들고 올 객체 수 
+		int pageSize = 4;
+		
+		// 페이지 정보 가져옴
+		PageRequest pageable = PageRequest.of(pageNumber, pageSize);
+		Page<User> page = repo.findAll(keyword, pageable);
+		
+		List<User> listUsers = page.getContent();
+		
+		listUsers.forEach(user -> System.out.println(user));
+		
+		assertThat(listUsers.size()).isGreaterThan(0);
+		
+	}
 }
