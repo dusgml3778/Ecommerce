@@ -99,7 +99,15 @@ public class UserContoroller {
 		
 		redirectAttributes.addFlashAttribute("message", "The user has been saved successfully.");
 		
-		return "redirect:/users";
+		return getRedirectURLtoAffectedUser(user);
+	
+	}
+
+	private String getRedirectURLtoAffectedUser(User user) {
+		//이메일의 앞부분 자름
+		String firstPartOfEmail = user.getEmail().split("@")[0];
+		//유저 정보를 수정했을때 첫번째 페이지로 돌아가지 않고 수정한 유저의 정보를 보여줌 url의 키워드에 이메일 앞부분을 붙여서 대상 유저만 검색되도록 함
+		return "redirect:/users/page/1?sortField=id&sortDir=asc&keyword=" + firstPartOfEmail;
 	}
 
 	@GetMapping("/users/edit/{id}")
