@@ -56,6 +56,8 @@
 		<div>
 			<h1>Manage Users</h1>
 			<a th:href="@{/users/new}">Create New User</a>
+			&nbsp;|&nbsp;
+			<a th:href="@{/users/export/csv}">Export to csv</a>
 		</div>
 		<div>
 			<div th:if="${message !=null}"
