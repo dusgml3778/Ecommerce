@@ -14,6 +14,7 @@ import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import com.shopme.admin.constant.ExporterConstant;
 import com.shopme.common.entity.User;
 
 public class UserExcelExporter extends AbstractExporter {
@@ -25,24 +26,37 @@ public class UserExcelExporter extends AbstractExporter {
 		workbook = new XSSFWorkbook();
 	}
 
+	// 엑셀 헤더 작성
 	private void writeHeaderLine() {
+
 		sheet = workbook.createSheet("Users");
 		XSSFRow row = sheet.createRow(0);
 
-		XSSFCellStyle cellStyle = workbook.createCellStyle();
-		XSSFFont font = workbook.createFont();
-		font.setBold(true);
-		font.setFontHeight(16);
-		cellStyle.setFont(font);
+		XSSFCellStyle cellStyle = setExcel(ExporterConstant.HEADER, ExporterConstant.FONT_SIZE_16);
 
-		this.createCell(row, 0, "User Id", cellStyle);
-		this.createCell(row, 1, "E-mail", cellStyle);
-		this.createCell(row, 2, "First Name", cellStyle);
-		this.createCell(row, 3, "Last Name", cellStyle);
-		this.createCell(row, 4, "Roles", cellStyle);
-		this.createCell(row, 5, "Enabled", cellStyle);
+		for (int columnIndex = 0; columnIndex < ExporterConstant.HeaderArray.length; columnIndex++) {
+
+			this.createCell(row, columnIndex, ExporterConstant.HeaderArray[columnIndex], cellStyle);
+		}
+
 	}
 
+	// 엑셀 환경설정 글씨 싸이즈 글씨 굴기 등
+	private XSSFCellStyle setExcel(String keyword, int fontSize16) {
+		XSSFCellStyle cellStyle = workbook.createCellStyle();
+		XSSFFont font = workbook.createFont();
+
+		if (keyword.equals(ExporterConstant.HEADER)) {
+
+			font.setBold(true);
+		}
+
+		font.setFontHeight(fontSize16);
+		cellStyle.setFont(font);
+		return cellStyle;
+	}
+
+	// 셀에 데이터 매핑
 	private void createCell(XSSFRow row, int columnIndex, Object value, CellStyle style) {
 
 		XSSFCell cell = row.createCell(columnIndex);
@@ -62,6 +76,7 @@ public class UserExcelExporter extends AbstractExporter {
 
 	}
 
+	// 엑셀 추출
 	public void export(List<User> listUsers, HttpServletResponse response) throws IOException {
 		super.setResponseHeader(response, "application/octet-stream", ".xlsx");
 
@@ -75,13 +90,11 @@ public class UserExcelExporter extends AbstractExporter {
 
 	}
 
+	// 데이터라인에 값 할당
 	private void writeDataLine(List<User> listUsers) {
 		int rowIndex = 1;
 
-		XSSFCellStyle cellStyle = workbook.createCellStyle();
-		XSSFFont font = workbook.createFont();
-		font.setFontHeight(14);
-		cellStyle.setFont(font);
+		XSSFCellStyle cellStyle = setExcel(ExporterConstant.DATA, ExporterConstant.FONT_SIZE_14);
 
 		for (User user : listUsers) {
 			XSSFRow row = sheet.createRow(rowIndex++);

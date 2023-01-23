@@ -9,6 +9,7 @@ import org.supercsv.io.CsvBeanWriter;
 import org.supercsv.io.ICsvBeanWriter;
 import org.supercsv.prefs.CsvPreference;
 
+import com.shopme.admin.constant.ExporterConstant;
 import com.shopme.common.entity.User;
 
 public class UserCsvExporter extends AbstractExporter {
@@ -19,17 +20,13 @@ public class UserCsvExporter extends AbstractExporter {
 
 		ICsvBeanWriter csvWriter = new CsvBeanWriter(response.getWriter(), CsvPreference.STANDARD_PREFERENCE);
 
-		// Excel의 헤더라인설정
-		String[] csvHeader = { "User ID", "E-mail", "First Name", "Last Name", "Roles", "Enabled" };
-		String[] fieldMapping = { "id", "email", "firstName", "lastName", "roles", "enabled" };
-
-		csvWriter.writeHeader(csvHeader);
+		// CSV의 헤더라인설정
+		csvWriter.writeHeader(ExporterConstant.HeaderArray);
 
 		listUsers.forEach(user -> {
 			try {
-				csvWriter.write(user, fieldMapping);
+				csvWriter.write(user, ExporterConstant.FieldMapping);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		});
